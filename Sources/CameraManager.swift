@@ -8,7 +8,6 @@
 
 import AVFoundation
 import CoreImage
-import CoreLocation
 import CoreMotion
 import ImageIO
 import MobileCoreServices
@@ -242,13 +241,13 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
      Property to enable or disable location services. Location services in camera is used for EXIF data.
      - note: Default value is **false**
      */
-    open var shouldUseLocationServices: Bool = false {
-        didSet {
-            if shouldUseLocationServices {
-                self.locationManager = CameraLocationManager()
-            }
-        }
-    }
+//    open var shouldUseLocationServices: Bool = false {
+//        didSet {
+//            if shouldUseLocationServices {
+//                self.locationManager = CameraLocationManager()
+//            }
+//        }
+//    }
     
     /// Property to change camera device between front and back.
     open var cameraDevice: CameraDevice = .back {
@@ -336,7 +335,7 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
     
     // MARK: - Private properties
     
-    fileprivate var locationManager: CameraLocationManager?
+//    fileprivate var locationManager: CameraLocationManager?
     
     fileprivate weak var embeddingView: UIView?
     fileprivate var videoCompletion: ((_ videoURL: URL?, _ error: NSError?) -> Void)?
@@ -606,9 +605,9 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
         
         var mutableMetadata = CGImageMetadataCreateMutableCopy(imageProperties)!
         
-        if let location = locationManager?.latestLocation {
-            mutableMetadata = _gpsMetadata(mutableMetadata, withLocation: location)
-        }
+//        if let location = locationManager?.latestLocation {
+//            mutableMetadata = _gpsMetadata(mutableMetadata, withLocation: location)
+//        }
         
         let finalMetadata: CGImageMetadata = mutableMetadata
         CGImageDestinationAddImageAndMetadata(destination, UIImage(data: data)!.cgImage!, finalMetadata, nil)
@@ -643,10 +642,10 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
     }
     
     fileprivate func _saveImageToLibrary(atFileURL filePath: URL, _ imageCompletion: @escaping (CaptureResult) -> Void) {
-        let location = locationManager?.latestLocation
+//        let location = locationManager?.latestLocation
         let date = Date()
         
-        library?.save(imageAtURL: filePath, albumName: imageAlbumName, date: date, location: location) { asset in
+        library?.save(imageAtURL: filePath, albumName: imageAlbumName, date: date, location: nil) { asset in
             
             guard let _ = asset else {
                 return imageCompletion(.failure(CaptureError.assetNotSaved))
@@ -908,10 +907,10 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
     }
     
     fileprivate func _saveVideoToLibrary(_ fileURL: URL) {
-        let location = locationManager?.latestLocation
+//        let location = locationManager?.latestLocation
         let date = Date()
         
-        library?.save(videoAtURL: fileURL, albumName: videoAlbumName, date: date, location: location, completion: { _ in
+        library?.save(videoAtURL: fileURL, albumName: videoAlbumName, date: date, location: nil, completion: { _ in
             self._executeVideoCompletionWithURL(fileURL, error: nil)
         })
     }
@@ -1307,9 +1306,9 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
                 currentConnection = stillImageOutput?.connection(with: AVMediaType.video)
             case .videoOnly, .videoWithMic:
                 currentConnection = _getMovieOutput().connection(with: AVMediaType.video)
-                if let location = locationManager?.latestLocation {
-                    _setVideoWithGPS(forLocation: location)
-            }
+//                if let location = locationManager?.latestLocation {
+//                    _setVideoWithGPS(forLocation: location)
+//            }
         }
         
         if let validPreviewLayer = previewLayer {
@@ -1683,42 +1682,42 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
     
     // MARK: - CameraLocationManager()
     
-    public class CameraLocationManager: NSObject, CLLocationManagerDelegate {
-        var locationManager = CLLocationManager()
-        var latestLocation: CLLocation?
-        
-        override init() {
-            super.init()
-            locationManager.delegate = self
-            locationManager.requestWhenInUseAuthorization()
-            locationManager.distanceFilter = kCLDistanceFilterNone
-            locationManager.headingFilter = 5.0
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        }
-        
-        func startUpdatingLocation() {
-            locationManager.startUpdatingLocation()
-        }
-        
-        func stopUpdatingLocation() {
-            locationManager.stopUpdatingLocation()
-        }
-        
-        // MARK: - CLLocationManagerDelegate
-        
-        public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-            // Pick the location with best (= smallest value) horizontal accuracy
-            latestLocation = locations.sorted { $0.horizontalAccuracy < $1.horizontalAccuracy }.first
-        }
-        
-        public func locationManager(_: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-            if status == .authorizedAlways || status == .authorizedWhenInUse {
-                locationManager.startUpdatingLocation()
-            } else {
-                locationManager.stopUpdatingLocation()
-            }
-        }
-    }
+//    public class CameraLocationManager: NSObject, CLLocationManagerDelegate {
+//        var locationManager = CLLocationManager()
+//        var latestLocation: CLLocation?
+//
+//        override init() {
+//            super.init()
+//            locationManager.delegate = self
+//            locationManager.requestWhenInUseAuthorization()
+//            locationManager.distanceFilter = kCLDistanceFilterNone
+//            locationManager.headingFilter = 5.0
+//            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+//        }
+//
+//        func startUpdatingLocation() {
+//            locationManager.startUpdatingLocation()
+//        }
+//
+//        func stopUpdatingLocation() {
+//            locationManager.stopUpdatingLocation()
+//        }
+//
+//        // MARK: - CLLocationManagerDelegate
+//
+//        public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//            // Pick the location with best (= smallest value) horizontal accuracy
+//            latestLocation = locations.sorted { $0.horizontalAccuracy < $1.horizontalAccuracy }.first
+//        }
+//
+//        public func locationManager(_: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+//            if status == .authorizedAlways || status == .authorizedWhenInUse {
+//                locationManager.startUpdatingLocation()
+//            } else {
+//                locationManager.stopUpdatingLocation()
+//            }
+//        }
+//    }
     
     // Determining whether the current device actually supports blurring
     // As seen on: http://stackoverflow.com/a/29997626/2269387
