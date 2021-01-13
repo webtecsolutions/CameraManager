@@ -747,7 +747,7 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
     
         let videoOutput = _getMovieOutput()
         
-        if shouldUseLocationServices {
+//        if shouldUseLocationServices {
             
             let specs = [kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier as String: AVMetadataIdentifier.quickTimeMetadataLocationISO6709,
                          kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType as String: kCMMetadataDataType_QuickTimeMetadataLocation_ISO6709 as String] as [String: Any]
@@ -767,7 +767,7 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
             let inputPort = newLocationMetadataInput.ports[0]
             captureSession.addConnection(AVCaptureConnection(inputPorts: [inputPort], output: videoOutput))
             
-        }
+//        }
 
         _updateIlluminationMode(flashMode)
         
